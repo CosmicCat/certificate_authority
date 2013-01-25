@@ -22,6 +22,10 @@ module CertificateAuthority
       opensslcsr = OpenSSL::X509::Request.new
       opensslcsr.subject = @distinguished_name.to_x509_name
       opensslcsr.public_key = @key_material.public_key
+      # if a private key is provided, sign the cert to make it valid
+      unless @key_material.private_key.nil?
+        opensslcsr.sign @key_material.private_key, OpenSSL::Digest::SHA1.new
+      end
       opensslcsr
     end
 
@@ -47,3 +51,4 @@ module CertificateAuthority
     end
   end
 end
+
